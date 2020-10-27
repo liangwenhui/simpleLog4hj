@@ -1,6 +1,18 @@
 package xyz.liangwh.simplelogger4j.core.events;
 
-public interface AcceptEvent {
+import lombok.Data;
 
-    void accept();
+import java.util.Date;
+
+/**
+ * 存放接受的日志
+ * 经过格式化之后的日志
+ */
+@Data
+public class AcceptEvent {
+
+    private Date time;
+    private String msg;
+
+
 }

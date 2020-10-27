@@ -5,9 +5,9 @@ package xyz.liangwh.simplelogger4j.core.loggers;
  */
 public interface Logger {
 
-    void info(Object msg);
-    void error(Object msg);
-    void warn(Object msg);
+    void info(String msg);
+    //void error(Object msg);
+    //void warn(Object msg);
 
 
 }
