@@ -2,21 +2,16 @@ package xyz.liangwh.simplelogger4j.core.appenders.impl;
 
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.util.StopWatch;
-import sun.java2d.pipe.LoopBasedPipe;
-import xyz.liangwh.simplelogger4j.core.AppendRegistrant;
+
 import xyz.liangwh.simplelogger4j.core.LogFactory;
 import xyz.liangwh.simplelogger4j.core.QueueRegistrant;
 import xyz.liangwh.simplelogger4j.core.appenders.Appender;
 import xyz.liangwh.simplelogger4j.core.events.HandleEvent;
-import xyz.liangwh.simplelogger4j.core.handler.Send2BufferHandler;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class FileAppender implements Appender {

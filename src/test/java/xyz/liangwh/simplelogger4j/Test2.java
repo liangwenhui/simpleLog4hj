@@ -4,7 +4,7 @@ import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 import lombok.Data;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import sun.misc.Contended;
 
 import java.io.UnsupportedEncodingException;
@@ -34,7 +34,6 @@ public class Test2 {
             ex.printStackTrace();
         }
     }
-
     @Test
     public void main() throws Exception {
         //log message
