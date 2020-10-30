@@ -1,38 +1,37 @@
 package xyz.liangwh.simplelogger4j.core.appenders.impl;
 
+import com.lmax.disruptor.EventTranslatorOneArg;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 
-import xyz.liangwh.simplelogger4j.core.LogFactory;
-import xyz.liangwh.simplelogger4j.core.QueueRegistrant;
+import lombok.Setter;
 import xyz.liangwh.simplelogger4j.core.appenders.Appender;
 import xyz.liangwh.simplelogger4j.core.events.HandleEvent;
 
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class FileAppender implements Appender {
-
     private StringBuffer buffer ;
     private int bufferSize;
     private final static int MAX_SIZE = 1024*8;
     private long timeoutMs = 300;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private QueueRegistrant registrant;
+    @Setter
+    private Disruptor<HandleEvent> writer;
+    @Setter
+    private EventTranslatorOneArg translator;
     private volatile long lastSendTime ;
 
     public void init(){
         bufferSize = 2048;
         buffer = new StringBuffer();
-        registrant = LogFactory.getQueueRegistrant();
-        LogFactory.getAppendRegistrant().regist(this);
+        //registrant = LogFactory.getQueueRegistrant();
         lastSendTime = System.currentTimeMillis();
     }
 
     public FileAppender(){
+        System.out.println("new file append");
         init();
     }
 
@@ -91,28 +90,11 @@ public class FileAppender implements Appender {
     }
 
     private void send(String s){
-        Disruptor<HandleEvent> writer = registrant.getWriter();
-        RingBuffer<HandleEvent> ringBuffer = writer.getRingBuffer();
+        RingBuffer ringBuffer = writer.getRingBuffer();
         ByteBuffer wrap = ByteBuffer.wrap(s.getBytes());
-        ringBuffer.publishEvent(FileAppender::translate,wrap);
+        ringBuffer.publishEvent(translator,wrap);
         lastSendTime = System.currentTimeMillis();
     }
 
-    public static void translate(HandleEvent event, long sequence, ByteBuffer buffer)
-    {
-        Charset charset = null;
-        CharsetDecoder decoder = null;
-        CharBuffer charBuffer = null;
-        try {
-            charset = Charset.forName("UTF-8");
-            decoder = charset.newDecoder();
-            //用这个的话，只能输出来一次结果，第二次显示为空
-            // charBuffer = decoder.decode(buffer);
-            charBuffer = decoder.decode(buffer.asReadOnlyBuffer());
-            event.setMsg(charBuffer.toString());
-            event.setFileName("D:\\info.log");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
+
 }

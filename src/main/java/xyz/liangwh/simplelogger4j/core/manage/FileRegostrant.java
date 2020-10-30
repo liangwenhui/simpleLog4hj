@@ -1,4 +1,4 @@
-package xyz.liangwh.simplelogger4j.core;
+package xyz.liangwh.simplelogger4j.core.manage;
 
 import java.io.RandomAccessFile;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package xyz.liangwh.simplelogger4j.core;
+package xyz.liangwh.simplelogger4j.core.manage;
 
 import xyz.liangwh.simplelogger4j.core.appenders.Appender;
 
