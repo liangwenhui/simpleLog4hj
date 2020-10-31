@@ -8,4 +8,7 @@ public class HandleEvent {
     private String msg;
     private String fileName;
 
+    private long start;
+    private long end;
+
 }

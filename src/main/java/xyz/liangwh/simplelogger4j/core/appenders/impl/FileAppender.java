@@ -1,14 +1,17 @@
 package xyz.liangwh.simplelogger4j.core.appenders.impl;
 
 import com.lmax.disruptor.EventTranslatorOneArg;
+import com.lmax.disruptor.EventTranslatorThreeArg;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
 import xyz.liangwh.simplelogger4j.core.appenders.Appender;
 import xyz.liangwh.simplelogger4j.core.events.HandleEvent;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class FileAppender implements Appender {
@@ -20,9 +23,10 @@ public class FileAppender implements Appender {
     @Setter
     private Disruptor<HandleEvent> writer;
     @Setter
-    private EventTranslatorOneArg translator;
+    private EventTranslatorThreeArg translator;
     private volatile long lastSendTime ;
-
+//    private AtomicLong nextStartIndex = new AtomicLong();
+    private long nextStartIndex = 0L;
     public void init(){
         bufferSize = 2048;
         buffer = new StringBuffer();
@@ -90,9 +94,13 @@ public class FileAppender implements Appender {
     }
 
     private void send(String s){
+        if(StringUtils.isEmpty(s)){
+            return;
+        }
         RingBuffer ringBuffer = writer.getRingBuffer();
         ByteBuffer wrap = ByteBuffer.wrap(s.getBytes());
-        ringBuffer.publishEvent(translator,wrap);
+        ringBuffer.publishEvent(translator,wrap,nextStartIndex,new Long(s.length()));
+        nextStartIndex+=s.length();
         lastSendTime = System.currentTimeMillis();
     }
 
