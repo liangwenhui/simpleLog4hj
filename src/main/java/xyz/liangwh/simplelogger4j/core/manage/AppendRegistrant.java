@@ -12,7 +12,7 @@ public class AppendRegistrant {
     private volatile List<Appender> appenders;
     private Thread rangDoAppendThread ;
     private volatile boolean  run = true;
-    private long rangMs = 200;
+    private long rangMs = 100;
 
     public AppendRegistrant(){
         this.appenders = new ArrayList<>();

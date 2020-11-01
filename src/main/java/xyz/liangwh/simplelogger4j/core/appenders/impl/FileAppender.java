@@ -18,7 +18,7 @@ public class FileAppender implements Appender {
     private StringBuffer buffer ;
     private int bufferSize;
     private final static int MAX_SIZE = 1024*8;
-    private long timeoutMs = 300;
+    private long timeoutMs = 100;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     @Setter
     private Disruptor<HandleEvent> writer;

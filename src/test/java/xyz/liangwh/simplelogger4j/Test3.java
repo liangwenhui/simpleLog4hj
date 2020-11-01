@@ -53,7 +53,7 @@ public class Test3 {
 
         try {
             latch.await();
-            TimeUnit.MILLISECONDS.sleep(2000);
+            TimeUnit.MILLISECONDS.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
