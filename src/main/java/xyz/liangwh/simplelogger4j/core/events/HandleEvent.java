@@ -1,7 +1,14 @@
 package xyz.liangwh.simplelogger4j.core.events;
 
-public interface HandleEvent {
+import lombok.Data;
 
+@Data
+public class HandleEvent {
 
-    void handle();
+    private String msg;
+    private String fileName;
+
+    private long start;
+    private long end;
+
 }
