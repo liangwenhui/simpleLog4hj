@@ -44,8 +44,9 @@ public class Test3 {
         //AppendRegistrant.getInstance().stop();
         for(int t=0;t<1;t++){
             new Thread(()->{
-                for(int i=0;i<100000;i++){
-                    logger.info(i+"_abc  abc\n");
+                for(int i=0;i<1000;i++){
+//                    logger.info(i+"_abc  abc\n");
+                    logger.fPrintln("%d ----------  %s",i,"\"kkkk\"");
                 }
                 latch.countDown();
             }).start();
@@ -74,4 +75,12 @@ public class Test3 {
         map.put(msg.getBytes());
 
     }
+
+    @Test
+    public void testForm(){
+        String format = String.format("%s   %d" ,"2a1","1");
+        System.out.println(format);
+
+    }
+
 }

@@ -34,36 +34,36 @@ public class Test2 {
             ex.printStackTrace();
         }
     }
-    @Test
-    public void main() throws Exception {
-        //log message
-        String msg = "log message";
-        //-> accept
-        Disruptor<MsgEvent> msgEventDisruptor = startAcceptQ();
-        ByteBuffer wrap = ByteBuffer.wrap(msg.getBytes("UTF-8"));
-        RingBuffer<MsgEvent> ringBuffer = msgEventDisruptor.getRingBuffer();
-        for(int i=0;i<20;i++){
-            ringBuffer.publishEvent(Test2::translate,wrap);
-        }
-
-    }
-
-    private Disruptor<MsgEvent> startAcceptQ(){
-        int bufferSize = 16;
-        Disruptor<MsgEvent> disruptor = new Disruptor<>(MsgEvent::new, bufferSize, DaemonThreadFactory.INSTANCE);
-        //消息处理
-        disruptor.handleEventsWith(Test2::stdoutHandle);
-        disruptor.start();
-        return disruptor;
-//        RingBuffer<MsgEvent> ringBuffer = disruptor.getRingBuffer();
-//        ByteBuffer bb = ByteBuffer.allocate(8);
-//        for (long l = 0; true; l++)
-//        {
-//            bb.putLong(0, l);
-//            ringBuffer.publishEvent(Main::translate, bb);
-//            Thread.sleep(1000);
+//    @Test
+//    public void main() throws Exception {
+//        //log message
+//        String msg = "log message";
+//        //-> accept
+//        Disruptor<MsgEvent> msgEventDisruptor = startAcceptQ();
+//        ByteBuffer wrap = ByteBuffer.wrap(msg.getBytes("UTF-8"));
+//        RingBuffer<MsgEvent> ringBuffer = msgEventDisruptor.getRingBuffer();
+//        for(int i=0;i<20;i++){
+////            ringBuffer.publishEvent(Test2::translate,wrap);
 //        }
-    }
+//
+//    }
+
+//    private Disruptor<MsgEvent> startAcceptQ(){
+//        int bufferSize = 16;
+//        Disruptor<MsgEvent> disruptor = new Disruptor<>(MsgEvent::new, bufferSize, DaemonThreadFactory.INSTANCE);
+//        //消息处理
+////        disruptor.handleEventsWith(Test2::stdoutHandle);
+//        disruptor.start();
+//        return disruptor;
+////        RingBuffer<MsgEvent> ringBuffer = disruptor.getRingBuffer();
+////        ByteBuffer bb = ByteBuffer.allocate(8);
+////        for (long l = 0; true; l++)
+////        {
+////            bb.putLong(0, l);
+////            ringBuffer.publishEvent(Main::translate, bb);
+////            Thread.sleep(1000);
+////        }
+//    }
 
 }
 @Data

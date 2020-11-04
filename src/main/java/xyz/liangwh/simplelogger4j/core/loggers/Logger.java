@@ -21,10 +21,24 @@ public abstract class Logger {
 
     private EventTranslatorOneArg  translator;
 
+    /**
+     * 输出一行日志
+     * @param msg
+     */
     public  void  info(String msg){
-        String fileterMsg = filter(msg);
+        //String fileterMsg = filter(msg);
         sendToAccepter(msg);
     }
+
+    /**
+     * 格式化输出日志
+     * @param format
+     */
+    public  void  fPrintln(String format,Object...args){
+        //assert format!=null:"format can not be null";
+        sendToAccepter( String.format(format,args)+"\r\n");
+    }
+
 
     protected  void sendToAccepter(String msg){
         try{
