@@ -44,7 +44,7 @@ public class Test3 {
         //AppendRegistrant.getInstance().stop();
         for(int t=0;t<1;t++){
             new Thread(()->{
-                for(int i=0;i<1000;i++){
+                for(int i=0;i<2;i++){
 //                    logger.info(i+"_abc  abc\n");
                     logger.fPrintln("%d ----------  %s",i,"\"kkkk\"");
                 }
@@ -54,7 +54,7 @@ public class Test3 {
 
         try {
             latch.await();
-            TimeUnit.MILLISECONDS.sleep(200);
+            //TimeUnit.MILLISECONDS.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

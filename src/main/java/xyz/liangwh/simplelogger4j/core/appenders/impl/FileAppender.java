@@ -9,8 +9,11 @@ import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import xyz.liangwh.simplelogger4j.core.appenders.Appender;
 import xyz.liangwh.simplelogger4j.core.events.HandleEvent;
+import xyz.liangwh.simplelogger4j.core.manage.LogFactory;
 
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -37,6 +40,12 @@ public class FileAppender implements Appender {
     public FileAppender(){
         System.out.println("new file append");
         init();
+        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+            System.out.println("关闭前刷写日志"+buffer.length());
+
+            close();
+        }));
+
     }
 
     public  void clearBuffer(){
@@ -78,19 +87,22 @@ public class FileAppender implements Appender {
     }
     @Override
     public void doAppend(String s) {
+        flush(s,false);
+    }
+
+    private void flush(String s,boolean flushNow){
         boolean timeToFlush = false;
         lock.writeLock().lock();
-       try {
-           buffer.append(s);
-           timeToFlush = isTimeToFlush();
-           if(timeToFlush){
-               send( buffer.toString());
-               clearBuffer();
-           }
-       }finally {
-           lock.writeLock().unlock();
-       }
-
+        try {
+            buffer.append(s);
+            timeToFlush = isTimeToFlush();
+            if(flushNow||timeToFlush){
+                send( buffer.toString());
+                clearBuffer();
+            }
+        }finally {
+            lock.writeLock().unlock();
+        }
     }
 
     private void send(String s){
@@ -102,6 +114,15 @@ public class FileAppender implements Appender {
         ringBuffer.publishEvent(translator,wrap,nextStartIndex,new Long(s.length()));
         nextStartIndex+=s.length();
         lastSendTime = System.currentTimeMillis();
+    }
+
+
+    /**
+     * 关闭将日志flush
+     */
+    private void close(){
+        flush("",true);
+
     }
 
 
