@@ -5,6 +5,9 @@ import xyz.liangwh.simplelogger4j.core.appenders.impl.FileAppender;
 import xyz.liangwh.simplelogger4j.core.events.AcceptEvent;
 import xyz.liangwh.simplelogger4j.core.manage.AppendRegistrant;
 import xyz.liangwh.simplelogger4j.core.manage.LogFactory;
+import xyz.liangwh.simplelogger4j.core.utils.FormatUtil;
+
+import java.util.Formatter;
 
 /**
  * 消费accpet queue
@@ -12,6 +15,7 @@ import xyz.liangwh.simplelogger4j.core.manage.LogFactory;
  */
 public class Send2BufferHandler {
 
+    private Formatter formatter =  new Formatter();
     private Appender fileAppender;
            // = LogFactory.getAppendRegistrant().getAppend(FileAppender.class);
     public Send2BufferHandler(){
@@ -21,7 +25,9 @@ public class Send2BufferHandler {
     }
     //private QueueRegistrant registrant = QueueRegistrant.getInstance();
     public void send(AcceptEvent event, long sequence, boolean endOfBatch){
-        fileAppender.doAppend(event.getMsg());
+
+        //fileAppender.doAppend(String.format(event.getFormat(),event.getArgs()));
+        fileAppender.doAppend(FormatUtil.format(event.getFormat(),event.getArgs()));
     }
 
 

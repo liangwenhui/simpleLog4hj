@@ -2,32 +2,32 @@ package xyz.liangwh.simplelogger4j.core.events;
 
 import com.lmax.disruptor.EventTranslator;
 import com.lmax.disruptor.EventTranslatorOneArg;
+import com.lmax.disruptor.EventTranslatorThreeArg;
+import com.lmax.disruptor.EventTranslatorTwoArg;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
-public class StringTranslator implements EventTranslatorOneArg<AcceptEvent, ByteBuffer> {
+public class StringTranslator implements EventTranslatorTwoArg<AcceptEvent, String,Object[]> {
 
     public StringTranslator(){
         System.out.println("StringTranslator");
     }
 
     @Override
-    public void translateTo(AcceptEvent event, long sequence, ByteBuffer buffer) {
-        Charset charset = null;
-        CharsetDecoder decoder = null;
-        CharBuffer charBuffer = null;
+    public void translateTo(AcceptEvent event, long sequence, String format,Object[] args) {
         try {
-            charset = Charset.forName("UTF-8");
-            decoder = charset.newDecoder();
-            //用这个的话，只能输出来一次结果，第二次显示为空
-            // charBuffer = decoder.decode(buffer);
-            charBuffer = decoder.decode(buffer.asReadOnlyBuffer());
-            event.setMsg(charBuffer.toString());
+            //event.setMsg(String.format(format, (Object[])args));
+            event.setFormat(format);
+            event.setArgs(args);
+//            event.setFormat("%s");
+//            event.setArgs(new Object[]{"1"});
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+
+
 }

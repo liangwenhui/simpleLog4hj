@@ -18,21 +18,30 @@ public class Test3 {
     @Test
     public void test(){
         Logger logger = LoggerManager.getLogger(this.getClass());
-       final CountDownLatch latch = new CountDownLatch(2);
+        int iLoopTimes = 100;
+        int test_times = 10000;
+        long start = System.currentTimeMillis();
+        //final CountDownLatch latch = new CountDownLatch(tn);
         //AppendRegistrant.getInstance().stop();
-        for(int t=0;t<2;t++){
-            new Thread(()->{
-                for(int i=0;i<1000000;i++){
-                    logger.info(i+"_abc  abc\n");
-                }
-                latch.countDown();
-            }).start();
+        for(int j=0;j<iLoopTimes;j++){
+            for(int i=0;i<test_times;i++){
+                logger.fPrint("INTERGET:%d|STRING:%s|FLOAT:%f\n",i,"awsadsadwsad",3.2);
+                //String format = String.format("%s   %f" ,"2a1",1.2);
+                //String forma = format("INTERGET:%d|STRING:%s|FLOAT:%f\n",1,"ssss",2.3);
+            }
+            for(int i=test_times-1;i>j;i--){
+                logger.fPrint("INTERGET:%d|STRING:%s|FLOAT:%f\n",i,"awsadsadwsad",3.2);
+                //String format = String.format("%s   %f" ,"2a1",1.2);
+                //String forma = format("INTERGET:%d|STRING:%s|FLOAT:%f\n",1,"ssss",2.3);
+            }
         }
-
+        long end = System.currentTimeMillis();
         try {
-            latch.await();
-            TimeUnit.MILLISECONDS.sleep(500);
-        } catch (InterruptedException e) {
+            //latch.await();
+            System.out.println("use time:"+(end-start)+"ms");
+            //TimeUnit.MILLISECONDS.sleep(20);
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -46,7 +55,7 @@ public class Test3 {
             new Thread(()->{
                 for(int i=0;i<2;i++){
 //                    logger.info(i+"_abc  abc\n");
-                    logger.fPrintln("%d ----------  %s",i,"\"kkkk\"");
+                    //logger.fPrintln("%d ----------  %s",i,"\"kkkk\"");
                 }
                 latch.countDown();
             }).start();
@@ -78,9 +87,44 @@ public class Test3 {
 
     @Test
     public void testForm(){
-        String format = String.format("%s   %d" ,"2a1","1");
+        int j=0;
+        for(int i=0;i<1000000;i++){
+            //String format = String.format("%s   %d" ,"2a1",1);
+            //StringUtils.replaceOnce("%s   %d","%s","string");
+            String forma = format("INTERGET:%d|STRING:%s|FLOAT:%f\n",1,"ssss",2.3);
+            //System.out.println(forma);
+        }
+        String format = String.format("%s   %f" ,"2a1",1.2);
         System.out.println(format);
+    }
 
+    private String format(String format,Object...args){
+        for (Object o : args){
+            if(o instanceof String){
+                format= StringUtils.replaceOnce(format, "%s", (String) o);
+            }else if(o instanceof Integer){
+                format= StringUtils.replaceOnce(format,"%d",o.toString());
+            }else if(o instanceof Float){
+                format=StringUtils.replaceOnce(format,"%f",o.toString());
+            }else if(o instanceof Double){
+                format=StringUtils.replaceOnce(format,"%f",o.toString());
+            }
+        }
+        return format;
+    }
+    private String format2(String format,Object...args){
+        for (Object o : args){
+            if(o instanceof String){
+                StringUtils.replaceOnce(format,"%s",(String) o);
+            }else if(o instanceof Integer){
+                StringUtils.replaceOnce(format,"%d",o.toString());
+            }else if(o instanceof Float){
+                StringUtils.replaceOnce(format,"%f",o.toString());
+            }else if(o instanceof Double){
+                StringUtils.replaceOnce(format,"%f",o.toString());
+            }
+        }
+        return null;
     }
 
 }

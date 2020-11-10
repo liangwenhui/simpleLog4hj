@@ -1,6 +1,7 @@
 package xyz.liangwh.simplelogger4j.core.loggers;
 
 import com.lmax.disruptor.EventTranslatorOneArg;
+import com.lmax.disruptor.EventTranslatorTwoArg;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import lombok.Data;
@@ -19,7 +20,7 @@ public abstract class Logger {
 
     private  Disruptor<AcceptEvent> queue;
 
-    private EventTranslatorOneArg  translator;
+    private EventTranslatorTwoArg translator;
 
     /**
      * 输出一行日志
@@ -27,25 +28,27 @@ public abstract class Logger {
      */
     public  void  info(String msg){
         //String fileterMsg = filter(msg);
-        sendToAccepter(msg);
+        //sendToAccepter(msg);
     }
 
     /**
      * 格式化输出日志
      * @param format
      */
-    public  void  fPrintln(String format,Object...args){
+    public  void  fPrint(String format,Object...args){
         //assert format!=null:"format can not be null";
-        sendToAccepter( String.format(format,args)+"\r\n");
+        //String.format(format,args)
+        sendToAccepter(format,args );
     }
 
 
-    protected  void sendToAccepter(String msg){
+    protected  void sendToAccepter(String format,Object... args){
         try{
             //Disruptor<AcceptEvent> queue = accepter.getQueue();
-            ByteBuffer wrap = ByteBuffer.wrap(msg.getBytes("UTF-8"));
+            //ByteBuffer wrap = ByteBuffer.wrap(msg.getBytes("UTF-8"));
             RingBuffer<AcceptEvent> ringBuffer = queue.getRingBuffer();
-            ringBuffer.publishEvent(translator,wrap);
+            ringBuffer.publishEvent(translator,format,args);
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -61,11 +64,11 @@ public abstract class Logger {
     //void warn(Object msg);
 
 
-    public EventTranslatorOneArg getTranslator() {
+    public EventTranslatorTwoArg getTranslator() {
         return translator;
     }
 
-    public void setTranslator(EventTranslatorOneArg translator) {
+    public void setTranslator(EventTranslatorTwoArg translator) {
         this.translator = translator;
     }
 

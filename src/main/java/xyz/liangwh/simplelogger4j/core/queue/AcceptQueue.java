@@ -1,6 +1,8 @@
 package xyz.liangwh.simplelogger4j.core.queue;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 import xyz.liangwh.simplelogger4j.core.events.AcceptEvent;
 import xyz.liangwh.simplelogger4j.core.handler.Send2BufferHandler;
@@ -10,7 +12,7 @@ import java.util.concurrent.ThreadFactory;
 
 public class AcceptQueue implements QueueFactory<AcceptEvent>{
 
-    private final static int BUFFER_SIZE = 2048;
+    private final static int BUFFER_SIZE = 4096;
 
     private Disruptor queue;
     private Object o = new Object();
@@ -31,7 +33,7 @@ public class AcceptQueue implements QueueFactory<AcceptEvent>{
                             thread.setDaemon(true);
                             return thread;
                         }
-                    });
+                    }, ProducerType.SINGLE,new BlockingWaitStrategy());
                     //消息处理
                     disruptor.handleEventsWith(new Send2BufferHandler()::send);
                     disruptor.start();
