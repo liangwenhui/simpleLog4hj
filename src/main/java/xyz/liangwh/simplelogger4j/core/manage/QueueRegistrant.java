@@ -24,9 +24,19 @@ public class QueueRegistrant {
         AcceptQueue acceptQueue = new AcceptQueue();
         Disruptor<AcceptEvent> queue = acceptQueue.getQueue();
         accepter = queue;
+
+        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+            //System.out.println("关闭前刷写日志"+buffer.length());
+            System.out.println("关闭队列");
+
+            close();
+        }));
     }
 
-
+    private void close() {
+        accepter.shutdown();
+        writer.shutdown();
+    }
 
 
 }

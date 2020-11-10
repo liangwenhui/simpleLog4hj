@@ -15,8 +15,8 @@ public class AcceptEvent {
 
     private Date time;
     //private String msg;
-    private String format;
-    private Object[] args;
-
+//    private String format;
+//    private Object[] args;
+    private byte[] bytes;
 
 }

@@ -8,8 +8,11 @@ import xyz.liangwh.simplelogger4j.core.loggers.Logger;
 import xyz.liangwh.simplelogger4j.core.manage.LoggerManager;
 
 import java.io.RandomAccessFile;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -26,11 +29,13 @@ public class Test3 {
         for(int j=0;j<iLoopTimes;j++){
             for(int i=0;i<test_times;i++){
                 logger.fPrint("INTERGET:%d|STRING:%s|FLOAT:%f\n",i,"awsadsadwsad",3.2);
+                //logger.fPrint("%d\n",i);
                 //String format = String.format("%s   %f" ,"2a1",1.2);
                 //String forma = format("INTERGET:%d|STRING:%s|FLOAT:%f\n",1,"ssss",2.3);
             }
             for(int i=test_times-1;i>j;i--){
                 logger.fPrint("INTERGET:%d|STRING:%s|FLOAT:%f\n",i,"awsadsadwsad",3.2);
+               //logger.fPrint("%d\n",i);
                 //String format = String.format("%s   %f" ,"2a1",1.2);
                 //String forma = format("INTERGET:%d|STRING:%s|FLOAT:%f\n",1,"ssss",2.3);
             }
@@ -49,22 +54,26 @@ public class Test3 {
     @Test
     public void test2(){
         Logger logger = LoggerManager.getLogger(this.getClass());
-        final CountDownLatch latch = new CountDownLatch(1);
+        int iLoopTimes = 1;
+        int test_times = 1000000;
+        long start = System.currentTimeMillis();
+        //final CountDownLatch latch = new CountDownLatch(tn);
         //AppendRegistrant.getInstance().stop();
-        for(int t=0;t<1;t++){
-            new Thread(()->{
-                for(int i=0;i<2;i++){
-//                    logger.info(i+"_abc  abc\n");
-                    //logger.fPrintln("%d ----------  %s",i,"\"kkkk\"");
-                }
-                latch.countDown();
-            }).start();
+        for(int j=0;j<iLoopTimes;j++){
+            for(int i=0;i<test_times;i++){
+                logger.fPrint("INTERGET:%d|STRING:%s|FLOAT:%f\n",i,"awsadsadwsad",3.2);
+                //logger.fPrint("%d\n",i);
+                //String format = String.format("%s   %f" ,"2a1",1.2);
+                //String forma = format("INTERGET:%d|STRING:%s|FLOAT:%f\n",1,"ssss",2.3);
+            }
         }
-
+        long end = System.currentTimeMillis();
         try {
-            latch.await();
-            //TimeUnit.MILLISECONDS.sleep(200);
-        } catch (InterruptedException e) {
+            //latch.await();
+            System.out.println("use time:"+(end-start)+"ms");
+            //TimeUnit.MILLISECONDS.sleep(20);
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -112,19 +121,49 @@ public class Test3 {
         }
         return format;
     }
-    private String format2(String format,Object...args){
-        for (Object o : args){
-            if(o instanceof String){
-                StringUtils.replaceOnce(format,"%s",(String) o);
-            }else if(o instanceof Integer){
-                StringUtils.replaceOnce(format,"%d",o.toString());
-            }else if(o instanceof Float){
-                StringUtils.replaceOnce(format,"%f",o.toString());
-            }else if(o instanceof Double){
-                StringUtils.replaceOnce(format,"%f",o.toString());
-            }
-        }
-        return null;
-    }
+    @Test
+    public  void format2(){
+        ByteBuffer bb = ByteBuffer.wrap("abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd".getBytes());
+        int index = 0;
+        byte[] b ;
+        ArrayList<byte[]> barr = new ArrayList<>();
+       while(bb.position()<bb.limit()){
+           if((bb.limit()-bb.position())>=64){
+               b = new byte[64];
+           }else{
+               b = new byte[bb.limit()-bb.position()];
+           }
+            bb.get(b);
+            barr.add(b);
 
+       }
+        System.out.println(barr.size());
+
+
+
+
+    }
+    @Test
+    public  void format3(){
+        ByteBuffer bb = ByteBuffer.allocate(64);
+        byte[] bytes = "aaa".getBytes();
+        while (true){
+            while (true){
+                if((bb.capacity()-bb.position())>=bytes.length){
+                    bb.put(bytes);
+                }else {
+                    //flush
+                    //Buffer clear = bb.clear();
+                    bb.flip();
+                    bb.get(new byte[bb.limit()]);
+                    bb = ByteBuffer.allocate(64);
+                    break;
+                }
+            }
+
+        }
+
+
+
+    }
 }

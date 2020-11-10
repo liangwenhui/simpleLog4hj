@@ -20,8 +20,8 @@ public class WriteBufferHandler {
         try {
             raf    = LogFactory.getFileRegostrant().addFile(event.getFileName());
             FileChannel channel = raf.getChannel();
-            MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_WRITE, event.getStart(), event.getEnd());
-            map.put(event.getMsg().getBytes());
+            MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_WRITE, event.getStart(), event.getSize());
+            map.put(event.getMsg());
             //int length = event.getMsg().length();
             //raf.seek(index);
             //raf.write(event.getMsg().getBytes());

@@ -8,8 +8,11 @@ import lombok.Data;
 import xyz.liangwh.simplelogger4j.core.events.AcceptEvent;
 import xyz.liangwh.simplelogger4j.core.events.StringTranslator;
 import xyz.liangwh.simplelogger4j.core.queue.QueueFactory;
+import xyz.liangwh.simplelogger4j.core.utils.FormatUtil;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 /**
  * 日志API提供者顶级接口
@@ -20,7 +23,7 @@ public abstract class Logger {
 
     private  Disruptor<AcceptEvent> queue;
 
-    private EventTranslatorTwoArg translator;
+    private EventTranslatorOneArg translator;
 
     /**
      * 输出一行日志
@@ -47,12 +50,36 @@ public abstract class Logger {
             //Disruptor<AcceptEvent> queue = accepter.getQueue();
             //ByteBuffer wrap = ByteBuffer.wrap(msg.getBytes("UTF-8"));
             RingBuffer<AcceptEvent> ringBuffer = queue.getRingBuffer();
-            ringBuffer.publishEvent(translator,format,args);
+            String msg = FormatUtil.format(format, args);
 
+            byte[][] getbbs = getbbs(msg);
+
+            //ringBuffer.publishEvent(translator,);
+            ringBuffer.publishEvents(translator,getbbs);
         }catch (Exception e){
             e.printStackTrace();
         }
     };
+
+    private byte[][] getbbs(String msg) throws UnsupportedEncodingException {
+        ByteBuffer bb = ByteBuffer.wrap(msg.getBytes("UTF-8"));
+        ArrayList<byte[]> barr = new ArrayList<>();
+        byte[] b;
+        while(bb.position()<bb.limit()){
+            if((bb.limit()-bb.position())>=64){
+                b = new byte[64];
+            }else{
+                b = new byte[bb.limit()-bb.position()];
+            }
+            bb.get(b);
+            barr.add(b);
+        }
+        byte[][] bbb = new byte[barr.size()][];
+        for(int i=0;i<barr.size();i++){
+            bbb[i] = barr.get(i);
+        }
+        return bbb;
+    }
 
     protected  String filter(String msg){
         //默认不做处理
@@ -64,11 +91,11 @@ public abstract class Logger {
     //void warn(Object msg);
 
 
-    public EventTranslatorTwoArg getTranslator() {
+    public EventTranslatorOneArg getTranslator() {
         return translator;
     }
 
-    public void setTranslator(EventTranslatorTwoArg translator) {
+    public void setTranslator(EventTranslatorOneArg translator) {
         this.translator = translator;
     }
 

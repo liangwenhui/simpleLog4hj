@@ -10,18 +10,17 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
-public class StringTranslator implements EventTranslatorTwoArg<AcceptEvent, String,Object[]> {
+public class StringTranslator implements EventTranslatorOneArg<AcceptEvent, byte[]> {
 
     public StringTranslator(){
         System.out.println("StringTranslator");
     }
 
     @Override
-    public void translateTo(AcceptEvent event, long sequence, String format,Object[] args) {
+    public void translateTo(AcceptEvent event, long sequence, byte[] b) {
         try {
             //event.setMsg(String.format(format, (Object[])args));
-            event.setFormat(format);
-            event.setArgs(args);
+            event.setBytes(b);
 //            event.setFormat("%s");
 //            event.setArgs(new Object[]{"1"});
         } catch (Exception ex) {

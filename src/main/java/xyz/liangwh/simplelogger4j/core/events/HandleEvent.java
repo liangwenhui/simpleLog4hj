@@ -1,14 +1,16 @@
 package xyz.liangwh.simplelogger4j.core.events;
 
 import lombok.Data;
+import sun.misc.Contended;
 
 @Data
+@Contended
 public class HandleEvent {
 
-    private String msg;
+    private byte[] msg;
     private String fileName;
 
     private long start;
-    private long end;
+    private long size;
 
 }

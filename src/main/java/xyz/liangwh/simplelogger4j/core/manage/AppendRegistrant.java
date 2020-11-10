@@ -26,7 +26,7 @@ public class AppendRegistrant {
                     }
                 }
                 for(Appender appender :appenders){
-                    appender.doAppend("");
+                    appender.doAppend("".getBytes());
                 }
                 try {
                     TimeUnit.MILLISECONDS.sleep(rangMs);

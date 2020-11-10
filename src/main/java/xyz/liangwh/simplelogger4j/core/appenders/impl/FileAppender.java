@@ -2,6 +2,7 @@ package xyz.liangwh.simplelogger4j.core.appenders.impl;
 
 import com.lmax.disruptor.EventTranslatorOneArg;
 import com.lmax.disruptor.EventTranslatorThreeArg;
+import com.lmax.disruptor.EventTranslatorTwoArg;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 
@@ -11,14 +12,17 @@ import xyz.liangwh.simplelogger4j.core.appenders.Appender;
 import xyz.liangwh.simplelogger4j.core.events.HandleEvent;
 import xyz.liangwh.simplelogger4j.core.manage.LogFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class FileAppender implements Appender {
-    private StringBuffer buffer ;
+    //private StringBuffer buffer ;
+    private ByteBuffer buffer;
     private int bufferSize;
     private final static int MAX_SIZE = 1024*8;
     private long timeoutMs = 100;
@@ -26,13 +30,14 @@ public class FileAppender implements Appender {
     @Setter
     private Disruptor<HandleEvent> writer;
     @Setter
-    private EventTranslatorThreeArg translator;
+    private EventTranslatorTwoArg translator;
     private volatile long lastSendTime ;
 //    private AtomicLong nextStartIndex = new AtomicLong();
     private long nextStartIndex = 0L;
     public void init(){
-        bufferSize = 2048;
-        buffer = new StringBuffer();
+        bufferSize = 4096;
+        //buffer = new StringBuffer();
+        buffer = ByteBuffer.allocate(bufferSize+64);
         //registrant = LogFactory.getQueueRegistrant();
         lastSendTime = System.currentTimeMillis();
     }
@@ -41,7 +46,8 @@ public class FileAppender implements Appender {
         System.out.println("new file append");
         init();
         Runtime.getRuntime().addShutdownHook(new Thread(()->{
-            System.out.println("关闭前刷写日志"+buffer.length());
+            //System.out.println("关闭前刷写日志"+buffer.length());
+            System.out.println("关闭前刷写日志"+buffer.position());
 
             close();
         }));
@@ -49,7 +55,8 @@ public class FileAppender implements Appender {
     }
 
     public  void clearBuffer(){
-        buffer.setLength(0);
+        buffer = ByteBuffer.allocate(bufferSize+64);
+        //buffer.setLength(0);
     }
 
     /**
@@ -68,7 +75,7 @@ public class FileAppender implements Appender {
         lock.readLock().lock();
         //满了没
         try {
-            flag = buffer.length()>=bufferSize;
+            flag = buffer.position()>=bufferSize;
 
         }finally {
             lock.readLock().unlock();
@@ -86,18 +93,23 @@ public class FileAppender implements Appender {
 
     }
     @Override
-    public void doAppend(String s) {
+    public void doAppend(byte[] s) {
+
         flush(s,false);
     }
 
-    private void flush(String s,boolean flushNow){
+    private void flush(byte[] s,boolean flushNow){
         boolean timeToFlush = false;
         lock.writeLock().lock();
         try {
-            buffer.append(s);
+            //buffer.append(new String(s));
+            buffer.put(s);
             timeToFlush = isTimeToFlush();
             if(flushNow||timeToFlush){
-                send( buffer.toString());
+                buffer.flip();
+                byte[] getb = new byte[buffer.limit()];
+                buffer.get(getb);
+                send( getb);
                 clearBuffer();
             }
         }finally {
@@ -105,15 +117,35 @@ public class FileAppender implements Appender {
         }
     }
 
-    private void send(String s){
-        if(StringUtils.isEmpty(s)){
+    private void send(byte[] s){
+        if(s.length==0){
             return;
         }
         RingBuffer ringBuffer = writer.getRingBuffer();
-        ByteBuffer wrap = ByteBuffer.wrap(s.getBytes());
-        ringBuffer.publishEvent(translator,wrap,nextStartIndex,new Long(s.length()));
-        nextStartIndex+=s.length();
+        ByteBuffer wrap = ByteBuffer.wrap(s);
+        //
+        ringBuffer.publishEvent(translator,s,nextStartIndex);
+        nextStartIndex+=s.length;
         lastSendTime = System.currentTimeMillis();
+    }
+
+    private byte[][] getbbs(ByteBuffer bb) throws UnsupportedEncodingException {
+        ArrayList<byte[]> barr = new ArrayList<>();
+        byte[] b;
+        while(bb.position()<bb.limit()){
+            if((bb.limit()-bb.position())>=64){
+                b = new byte[64];
+            }else{
+                b = new byte[bb.limit()-bb.position()];
+            }
+            bb.get(b);
+            barr.add(b);
+        }
+        byte[][] bbb = new byte[barr.size()][];
+        for(int i=0;i<barr.size();i++){
+            bbb[i] = barr.get(i);
+        }
+        return bbb;
     }
 
 
@@ -121,7 +153,7 @@ public class FileAppender implements Appender {
      * 关闭将日志flush
      */
     private void close(){
-        flush("",true);
+        flush("".getBytes(),true);
 
     }
 
