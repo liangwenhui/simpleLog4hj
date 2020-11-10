@@ -103,6 +103,9 @@ public class FileAppender implements Appender {
         lock.writeLock().lock();
         try {
             //buffer.append(new String(s));
+            if(s==null){
+                return;
+            }
             buffer.put(s);
             timeToFlush = isTimeToFlush();
             if(flushNow||timeToFlush){

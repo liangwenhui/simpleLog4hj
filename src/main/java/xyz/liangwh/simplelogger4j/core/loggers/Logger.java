@@ -13,6 +13,13 @@ import xyz.liangwh.simplelogger4j.core.utils.FormatUtil;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 日志API提供者顶级接口
@@ -25,6 +32,16 @@ public abstract class Logger {
 
     private EventTranslatorOneArg translator;
 
+    protected ExecutorService service = new ThreadPoolExecutor(3, 10, 120L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>(), new UpdateHeadwaterTheadFactory());
+
+    public static class UpdateHeadwaterTheadFactory implements ThreadFactory {
+        private static AtomicInteger times = new AtomicInteger();
+        @Override
+        public Thread newThread(Runnable r) {
+            return new Thread(r, "log-" + times.incrementAndGet());
+        }
+    }
     /**
      * 输出一行日志
      * @param msg
@@ -41,7 +58,10 @@ public abstract class Logger {
     public  void  fPrint(String format,Object...args){
         //assert format!=null:"format can not be null";
         //String.format(format,args)
-        sendToAccepter(format,args );
+
+        //service.execute(()->{
+            sendToAccepter(format,args );
+        //});
     }
 
 
@@ -56,6 +76,8 @@ public abstract class Logger {
 
             //ringBuffer.publishEvent(translator,);
             ringBuffer.publishEvents(translator,getbbs);
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
