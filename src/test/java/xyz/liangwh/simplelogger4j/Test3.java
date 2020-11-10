@@ -29,6 +29,7 @@ public class Test3 {
         for(int j=0;j<iLoopTimes;j++){
             for(int i=0;i<test_times;i++){
                 logger.fPrint("INTERGET:%d|STRING:%s|FLOAT:%f\n",i,"awsadsadwsad",3.2);
+
                 //logger.fPrint("%d\n",i);
                 //String format = String.format("%s   %f" ,"2a1",1.2);
                 //String forma = format("INTERGET:%d|STRING:%s|FLOAT:%f\n",1,"ssss",2.3);

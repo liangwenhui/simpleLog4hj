@@ -124,29 +124,30 @@ public class FileAppender implements Appender {
         RingBuffer ringBuffer = writer.getRingBuffer();
         ByteBuffer wrap = ByteBuffer.wrap(s);
         //
+
         ringBuffer.publishEvent(translator,s,nextStartIndex);
         nextStartIndex+=s.length;
         lastSendTime = System.currentTimeMillis();
     }
 
-    private byte[][] getbbs(ByteBuffer bb) throws UnsupportedEncodingException {
-        ArrayList<byte[]> barr = new ArrayList<>();
-        byte[] b;
-        while(bb.position()<bb.limit()){
-            if((bb.limit()-bb.position())>=64){
-                b = new byte[64];
-            }else{
-                b = new byte[bb.limit()-bb.position()];
-            }
-            bb.get(b);
-            barr.add(b);
-        }
-        byte[][] bbb = new byte[barr.size()][];
-        for(int i=0;i<barr.size();i++){
-            bbb[i] = barr.get(i);
-        }
-        return bbb;
-    }
+//    private ArrayList<byte[]> getbbs(ByteBuffer bb) throws UnsupportedEncodingException {
+//        ArrayList<byte[]> barr = new ArrayList<>();
+//        byte[] b;
+//        while(bb.position()<bb.limit()){
+//            if((bb.limit()-bb.position())>=64){
+//                b = new byte[64];
+//            }else{
+//                b = new byte[bb.limit()-bb.position()];
+//            }
+//            bb.get(b);
+//            barr.add(b);
+//        }
+////        byte[][] bbb = new byte[barr.size()][];
+////        for(int i=0;i<barr.size();i++){
+////            bbb[i] = barr.get(i);
+////        }
+//        return barr;
+//    }
 
 
     /**
