@@ -48,7 +48,7 @@ public class Test3 {
         long end = System.currentTimeMillis();
         try {
             //latch.await();
-            System.out.println("use time:"+(end-start)+"ms");
+            System.out.println("use time:"+(end-start)+"s");
             //TimeUnit.MILLISECONDS.sleep(20);
         }
         catch (Exception e) {

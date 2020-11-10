@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadFactory;
 
 public class AcceptQueue implements QueueFactory<AcceptEvent>{
 
-    private final static int BUFFER_SIZE = 4096;
+    private final static int BUFFER_SIZE = 1024 * 16;
 
     private Disruptor queue;
     private Object o = new Object();
@@ -33,7 +33,7 @@ public class AcceptQueue implements QueueFactory<AcceptEvent>{
                             thread.setDaemon(true);
                             return thread;
                         }
-                    }, ProducerType.SINGLE,new BlockingWaitStrategy());
+                    }, ProducerType.MULTI,new BlockingWaitStrategy());
                     //消息处理
                     disruptor.handleEventsWith(new Send2BufferHandler()::send);
                     disruptor.start();

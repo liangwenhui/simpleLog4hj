@@ -26,8 +26,8 @@ public class Send2BufferHandler {
     //private QueueRegistrant registrant = QueueRegistrant.getInstance();
     public void send(AcceptEvent event, long sequence, boolean endOfBatch){
 
-        //fileAppender.doAppend(String.format(event.getFormat(),event.getArgs()));
-        fileAppender.doAppend(event.getBytes());
+        fileAppender.doAppend(FormatUtil.format(event.getFormat(),event.getArgs()).getBytes());
+        //fileAppender.doAppend(event.getBytes());
     }
 
 

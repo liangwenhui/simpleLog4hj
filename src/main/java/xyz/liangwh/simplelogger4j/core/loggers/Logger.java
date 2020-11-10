@@ -30,7 +30,7 @@ public abstract class Logger {
 
     private  Disruptor<AcceptEvent> queue;
 
-    private EventTranslatorOneArg translator;
+    private EventTranslatorTwoArg translator;
 
     protected ExecutorService service = new ThreadPoolExecutor(3, 10, 120L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>(), new UpdateHeadwaterTheadFactory());
@@ -70,12 +70,12 @@ public abstract class Logger {
             //Disruptor<AcceptEvent> queue = accepter.getQueue();
             //ByteBuffer wrap = ByteBuffer.wrap(msg.getBytes("UTF-8"));
             RingBuffer<AcceptEvent> ringBuffer = queue.getRingBuffer();
-            String msg = FormatUtil.format(format, args);
+//            String msg = FormatUtil.format(format, args);
+//
+//            byte[][] getbbs = getbbs(msg);
 
-            byte[][] getbbs = getbbs(msg);
-
-            //ringBuffer.publishEvent(translator,);
-            ringBuffer.publishEvents(translator,getbbs);
+            ringBuffer.publishEvent(translator,format,args);
+            //ringBuffer.publishEvents(translator,getbbs);
 
 
         }catch (Exception e){
@@ -113,11 +113,11 @@ public abstract class Logger {
     //void warn(Object msg);
 
 
-    public EventTranslatorOneArg getTranslator() {
+    public EventTranslatorTwoArg getTranslator() {
         return translator;
     }
 
-    public void setTranslator(EventTranslatorOneArg translator) {
+    public void setTranslator(EventTranslatorTwoArg translator) {
         this.translator = translator;
     }
 

@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WriteQueue implements QueueFactory<HandleEvent> {
-    private final static int BUFFER_SIZE = 4096;
+    private final static int BUFFER_SIZE = 1024*8;
 
     private Disruptor queue;
     private Object o = new Object();
