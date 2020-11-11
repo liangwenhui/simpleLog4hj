@@ -35,7 +35,7 @@ public class FileAppender implements Appender {
 //    private AtomicLong nextStartIndex = new AtomicLong();
     private long nextStartIndex = 0L;
     public void init(){
-        bufferSize = 1024;
+        bufferSize = 1024*7;
         //buffer = new StringBuffer();
         buffer = ByteBuffer.allocate(bufferSize+1024);
         //registrant = LogFactory.getQueueRegistrant();

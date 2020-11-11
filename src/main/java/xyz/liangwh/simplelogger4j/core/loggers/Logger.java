@@ -29,7 +29,7 @@ public abstract class Logger {
 
     private String className;
 
-    private  Disruptor<AcceptMarkEvent> queue;
+    private  Disruptor<AcceptEvent> queue;
 
     private EventTranslatorTwoArg translator;
 
@@ -70,7 +70,7 @@ public abstract class Logger {
         try{
             //Disruptor<AcceptEvent> queue = accepter.getQueue();
             //ByteBuffer wrap = ByteBuffer.wrap(msg.getBytes("UTF-8"));
-            RingBuffer<AcceptMarkEvent> ringBuffer = queue.getRingBuffer();
+            RingBuffer<AcceptEvent> ringBuffer = queue.getRingBuffer();
 //            String msg = FormatUtil.format(format, args);
 //
 //            byte[][] getbbs = getbbs(msg);
@@ -130,11 +130,11 @@ public abstract class Logger {
         this.className = className;
     }
 
-    public Disruptor<AcceptMarkEvent> getQueue() {
+    public Disruptor<AcceptEvent> getQueue() {
         return queue;
     }
 
-    public void setQueue(Disruptor<AcceptMarkEvent> queue) {
+    public void setQueue(Disruptor<AcceptEvent> queue) {
         this.queue = queue;
     }
 }

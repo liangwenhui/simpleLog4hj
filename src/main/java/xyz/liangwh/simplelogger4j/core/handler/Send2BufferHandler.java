@@ -25,11 +25,11 @@ public class Send2BufferHandler {
         fileAppender= appendRegistrant.getAppend(FileAppender.class);
     }
     //private QueueRegistrant registrant = QueueRegistrant.getInstance();
-    public void send(AcceptMarkEvent event, long sequence, boolean endOfBatch){
-        AcceptEvent acceptEvent = LogFactory.LOG_TABLE.get(event.getId());
-        while(acceptEvent==null){
-            acceptEvent = LogFactory.LOG_TABLE.get(event.getId());
-        }
+    public void send(AcceptEvent acceptEvent, long sequence, boolean endOfBatch){
+//        AcceptEvent acceptEvent = LogFactory.LOG_TABLE.get(event.getId());
+//        while(acceptEvent==null){
+//            acceptEvent = LogFactory.LOG_TABLE.get(event.getId());
+//        }
         fileAppender.doAppend(FormatUtil.format(acceptEvent.getFormat(),acceptEvent.getArgs()).getBytes());
     }
 

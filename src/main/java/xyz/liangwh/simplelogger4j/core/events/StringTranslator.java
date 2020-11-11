@@ -12,20 +12,22 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
-public class StringTranslator implements EventTranslatorTwoArg<AcceptMarkEvent,String ,Object[] > {
+public class StringTranslator implements EventTranslatorTwoArg<AcceptEvent,String ,Object[] > {
 
     public StringTranslator(){
         System.out.println("StringTranslator");
     }
 
     @Override
-    public void translateTo(AcceptMarkEvent event, long sequence,String format,Object[] args) {
+    public void translateTo(AcceptEvent event, long sequence,String format,Object[] args) {
         try {
-            AcceptEvent acceptEvent = new AcceptEvent();
-            acceptEvent.setArgs(args);
-            acceptEvent.setFormat(format);
-            LogFactory.LOG_TABLE.put(sequence,acceptEvent);
-            event.setId(sequence);
+//            AcceptEvent acceptEvent = new AcceptEvent();
+//            acceptEvent.setArgs(args);
+//            acceptEvent.setFormat(format);
+//            LogFactory.LOG_TABLE.put(sequence,acceptEvent);
+//            event.setId(sequence);
+            event.setFormat(format);
+            event.setArgs(args);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

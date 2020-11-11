@@ -11,7 +11,7 @@ import xyz.liangwh.simplelogger4j.core.queue.WriteQueue;
 @Data
 public class QueueRegistrant {
 
-    private Disruptor<AcceptMarkEvent> accepter;
+    private Disruptor<AcceptEvent> accepter;
     private Disruptor<HandleEvent> writer;
     private static Object o = new Object();
     public QueueRegistrant(){
@@ -23,7 +23,7 @@ public class QueueRegistrant {
         WriteQueue writeQueue = new WriteQueue();
         writer = writeQueue.getQueue();
         AcceptQueue acceptQueue = new AcceptQueue();
-        Disruptor<AcceptMarkEvent> queue = acceptQueue.getQueue();
+        Disruptor<AcceptEvent> queue = acceptQueue.getQueue();
         accepter = queue;
 
         Runtime.getRuntime().addShutdownHook(new Thread(()->{

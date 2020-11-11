@@ -11,9 +11,9 @@ import xyz.liangwh.simplelogger4j.core.handler.Send2BufferHandler;
 import java.util.concurrent.ThreadFactory;
 
 
-public class AcceptQueue implements QueueFactory<AcceptMarkEvent>{
+public class AcceptQueue implements QueueFactory<AcceptEvent>{
 
-    private final static int BUFFER_SIZE = 1024 * 32;
+    private final static int BUFFER_SIZE = 1024 * 8;
 
     private Disruptor queue;
     private Object o = new Object();
@@ -21,13 +21,13 @@ public class AcceptQueue implements QueueFactory<AcceptMarkEvent>{
 
     public  AcceptQueue (){}
 
-    public Disruptor<AcceptMarkEvent> getQueue(){
+    public Disruptor<AcceptEvent> getQueue(){
         if(this.queue==null){
             synchronized (o){
                 if(this.queue==null){
-                    Disruptor<AcceptMarkEvent> disruptor
+                    Disruptor<AcceptEvent> disruptor
                             //= new Disruptor<>(AcceptEvent::new, BUFFER_SIZE, DaemonThreadFactory.INSTANCE);
-                            = new Disruptor<>(AcceptMarkEvent::new, BUFFER_SIZE, new ThreadFactory() {
+                            = new Disruptor<>(AcceptEvent::new, BUFFER_SIZE, new ThreadFactory() {
                         @Override
                         public Thread newThread(Runnable r) {
                             Thread thread = new Thread(r,"AcceptMarkEventThread");
