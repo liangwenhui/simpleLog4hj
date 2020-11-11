@@ -35,9 +35,9 @@ public class FileAppender implements Appender {
 //    private AtomicLong nextStartIndex = new AtomicLong();
     private long nextStartIndex = 0L;
     public void init(){
-        bufferSize = 4096;
+        bufferSize = 1024;
         //buffer = new StringBuffer();
-        buffer = ByteBuffer.allocate(bufferSize+64);
+        buffer = ByteBuffer.allocate(bufferSize+1024);
         //registrant = LogFactory.getQueueRegistrant();
         lastSendTime = System.currentTimeMillis();
     }
@@ -55,7 +55,7 @@ public class FileAppender implements Appender {
     }
 
     public  void clearBuffer(){
-        buffer = ByteBuffer.allocate(bufferSize+64);
+        buffer = ByteBuffer.allocate(bufferSize+1024);
         //buffer.setLength(0);
     }
 
@@ -125,9 +125,9 @@ public class FileAppender implements Appender {
             return;
         }
         RingBuffer ringBuffer = writer.getRingBuffer();
-        ByteBuffer wrap = ByteBuffer.wrap(s);
+        //ByteBuffer wrap = ByteBuffer.wrap(s);
         //
-
+        //s = new byte[]{33,33,33,33,33,33,33,33};
         ringBuffer.publishEvent(translator,s,nextStartIndex);
         nextStartIndex+=s.length;
         lastSendTime = System.currentTimeMillis();

@@ -1,7 +1,11 @@
 package xyz.liangwh.simplelogger4j.core.manage;
 
 import xyz.liangwh.simplelogger4j.core.appenders.impl.FileAppender;
+import xyz.liangwh.simplelogger4j.core.events.AcceptEvent;
 import xyz.liangwh.simplelogger4j.core.events.WriterFileTranslator;
+
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LogFactory {
 
@@ -10,12 +14,15 @@ public class LogFactory {
     private static volatile AppendRegistrant appendRegistrant = new AppendRegistrant();
     private static volatile QueueRegistrant queueRegistrant = new QueueRegistrant();
 
+    public static final HashMap<Long, AcceptEvent> LOG_TABLE = new HashMap<>(1024 * 32);
+
+
     static{
         FileAppender fileAppender = new FileAppender();
         appendRegistrant.regist(fileAppender);
         queueRegistrant.init();
         WriterFileTranslator writerFileTranslator = new WriterFileTranslator();
-        writerFileTranslator.setFileName("D:\\info.log");
+        writerFileTranslator.setFileName("./info.log");
         fileAppender.setTranslator(writerFileTranslator);
         fileAppender.setWriter(queueRegistrant.getWriter());
 

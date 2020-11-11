@@ -21,10 +21,10 @@ public class WriteBufferHandleWorker implements WorkHandler<HandleEvent> {
 //        System.out.println(Thread.currentThread().getName()+":: write");
         RandomAccessFile raf =null;
         try {
-            raf    = LogFactory.getFileRegostrant().addFile(event.getFileName());
-            FileChannel channel = raf.getChannel();
-            MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_WRITE, event.getStart(), event.getSize());
-            map.put(event.getMsg());
+//            raf    = LogFactory.getFileRegostrant().addFile(event.getFileName());
+//            FileChannel channel = raf.getChannel();
+//            MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_WRITE, event.getStart(), event.getSize());
+//            map.put(event.getMsg());
         }catch (Exception e){
             System.err.println("写日志文件发生异常");
             e.printStackTrace();

@@ -6,6 +6,7 @@ import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import lombok.Data;
 import xyz.liangwh.simplelogger4j.core.events.AcceptEvent;
+import xyz.liangwh.simplelogger4j.core.events.AcceptMarkEvent;
 import xyz.liangwh.simplelogger4j.core.events.StringTranslator;
 import xyz.liangwh.simplelogger4j.core.queue.QueueFactory;
 import xyz.liangwh.simplelogger4j.core.utils.FormatUtil;
@@ -28,7 +29,7 @@ public abstract class Logger {
 
     private String className;
 
-    private  Disruptor<AcceptEvent> queue;
+    private  Disruptor<AcceptMarkEvent> queue;
 
     private EventTranslatorTwoArg translator;
 
@@ -69,7 +70,7 @@ public abstract class Logger {
         try{
             //Disruptor<AcceptEvent> queue = accepter.getQueue();
             //ByteBuffer wrap = ByteBuffer.wrap(msg.getBytes("UTF-8"));
-            RingBuffer<AcceptEvent> ringBuffer = queue.getRingBuffer();
+            RingBuffer<AcceptMarkEvent> ringBuffer = queue.getRingBuffer();
 //            String msg = FormatUtil.format(format, args);
 //
 //            byte[][] getbbs = getbbs(msg);
@@ -83,25 +84,25 @@ public abstract class Logger {
         }
     };
 
-    private byte[][] getbbs(String msg) throws UnsupportedEncodingException {
-        ByteBuffer bb = ByteBuffer.wrap(msg.getBytes("UTF-8"));
-        ArrayList<byte[]> barr = new ArrayList<>();
-        byte[] b;
-        while(bb.position()<bb.limit()){
-            if((bb.limit()-bb.position())>=64){
-                b = new byte[64];
-            }else{
-                b = new byte[bb.limit()-bb.position()];
-            }
-            bb.get(b);
-            barr.add(b);
-        }
-        byte[][] bbb = new byte[barr.size()][];
-        for(int i=0;i<barr.size();i++){
-            bbb[i] = barr.get(i);
-        }
-        return bbb;
-    }
+//    private byte[][] getbbs(String msg) throws UnsupportedEncodingException {
+//        ByteBuffer bb = ByteBuffer.wrap(msg.getBytes("UTF-8"));
+//        ArrayList<byte[]> barr = new ArrayList<>();
+//        byte[] b;
+//        while(bb.position()<bb.limit()){
+//            if((bb.limit()-bb.position())>=64){
+//                b = new byte[64];
+//            }else{
+//                b = new byte[bb.limit()-bb.position()];
+//            }
+//            bb.get(b);
+//            barr.add(b);
+//        }
+//        byte[][] bbb = new byte[barr.size()][];
+//        for(int i=0;i<barr.size();i++){
+//            bbb[i] = barr.get(i);
+//        }
+//        return bbb;
+//    }
 
     protected  String filter(String msg){
         //默认不做处理
@@ -129,11 +130,11 @@ public abstract class Logger {
         this.className = className;
     }
 
-    public Disruptor<AcceptEvent> getQueue() {
+    public Disruptor<AcceptMarkEvent> getQueue() {
         return queue;
     }
 
-    public void setQueue(Disruptor<AcceptEvent> queue) {
+    public void setQueue(Disruptor<AcceptMarkEvent> queue) {
         this.queue = queue;
     }
 }

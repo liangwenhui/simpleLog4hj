@@ -3,6 +3,7 @@ package xyz.liangwh.simplelogger4j.core.handler;
 import xyz.liangwh.simplelogger4j.core.appenders.Appender;
 import xyz.liangwh.simplelogger4j.core.appenders.impl.FileAppender;
 import xyz.liangwh.simplelogger4j.core.events.AcceptEvent;
+import xyz.liangwh.simplelogger4j.core.events.AcceptMarkEvent;
 import xyz.liangwh.simplelogger4j.core.manage.AppendRegistrant;
 import xyz.liangwh.simplelogger4j.core.manage.LogFactory;
 import xyz.liangwh.simplelogger4j.core.utils.FormatUtil;
@@ -24,10 +25,12 @@ public class Send2BufferHandler {
         fileAppender= appendRegistrant.getAppend(FileAppender.class);
     }
     //private QueueRegistrant registrant = QueueRegistrant.getInstance();
-    public void send(AcceptEvent event, long sequence, boolean endOfBatch){
-
-        fileAppender.doAppend(FormatUtil.format(event.getFormat(),event.getArgs()).getBytes());
-        //fileAppender.doAppend(event.getBytes());
+    public void send(AcceptMarkEvent event, long sequence, boolean endOfBatch){
+        AcceptEvent acceptEvent = LogFactory.LOG_TABLE.get(event.getId());
+        while(acceptEvent==null){
+            acceptEvent = LogFactory.LOG_TABLE.get(event.getId());
+        }
+        fileAppender.doAppend(FormatUtil.format(acceptEvent.getFormat(),acceptEvent.getArgs()).getBytes());
     }
 
 
